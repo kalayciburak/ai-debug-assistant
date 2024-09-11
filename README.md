@@ -52,11 +52,6 @@ controllers and provide AI-generated explanations and solutions.
 Here's an example of a basic Spring Boot application setup:
 
 ```java
-package com.kalayciburak.inventoryservice;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 @SpringBootApplication(scanBasePackages = "com.kalayciburak")
 public class InventoryServiceApplication {
 
