@@ -1,5 +1,6 @@
-package com.kalayciburak.aidebugassistant.client;
+package com.kalayciburak.aidebugassistant.adapter;
 
+import com.kalayciburak.aidebugassistant.service.ChatService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class AiClient {
+public class AiClient implements ChatService {
     private final RestTemplate restTemplate;
 
     @Value("${api.key}")
@@ -22,23 +23,18 @@ public class AiClient {
         this.restTemplate = new RestTemplate();
     }
 
-    public String sendChatMessage(String messageContent) {
+    @Override
+    public String sendMessage(String messageContent) {
         var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(apiKey);
 
-        var body = String.format(
-                "{\"messages\": [{\"role\": \"user\", \"content\": \"%s\"}], \"model\": \"%s\"}",
-                messageContent, apiModel
-        );
+        var requestBodyFormat = "{\"messages\": [{\"role\": \"user\", \"content\": \"%s\"}], \"model\": \"%s\"}";
+        var body = String.format(requestBodyFormat, messageContent, apiModel);
 
         var request = new HttpEntity<>(body, headers);
-        var response = restTemplate.postForEntity(
-                baseUrl + "/v1/chat/completions",
-                request,
-                String.class
-        );
+        var url = baseUrl + "/v1/chat/completions";
 
-        return response.getBody();
+        return restTemplate.postForObject(url, request, String.class);
     }
 }

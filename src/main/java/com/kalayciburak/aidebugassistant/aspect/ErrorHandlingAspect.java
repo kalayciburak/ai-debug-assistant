@@ -1,7 +1,7 @@
 package com.kalayciburak.aidebugassistant.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kalayciburak.aidebugassistant.client.AiClient;
+import com.kalayciburak.aidebugassistant.adapter.AiClient;
 import com.kalayciburak.aidebugassistant.exception.AiEnhancedException;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
@@ -33,7 +33,7 @@ public class ErrorHandlingAspect {
     public void handleException(Exception ex) throws Exception {
         normalizeLanguage();
         var prompt = String.format(PROMPT, ex.getMessage(), language, language);
-        var json = aiClient.sendChatMessage(prompt);
+        var json = aiClient.sendMessage(prompt);
 
         var rootNode = mapper.readTree(json);
         var contentNode = rootNode.path("choices").get(0).path("message").path("content");
